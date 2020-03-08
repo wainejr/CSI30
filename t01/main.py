@@ -1,8 +1,11 @@
 import numpy as np
 
+from beam_search import BeamSearchSolver
+from genetic_algorithm import GeneticAlgorithmSolver
+
 
 if(__name__=="__main__"):
-    dist_mat = np.array(
+    distance_matrix = np.array(
         [0,29,82,46,68,52,72,42,51,55,29,74,23,72,46,
         29,0,55,46,42,43,43,23,23,31,41,51,11,52,21,
         82,55,0,68,46,55,23,43,41,29,79,21,64,31,51,
@@ -18,3 +21,8 @@ if(__name__=="__main__"):
         23,11,64,51,46,51,51,33,29,41,42,61,0,62,23,
         72,52,31,43,65,29,46,31,51,23,59,11,62,0,59,
         46,21,51,64,23,59,33,37,11,37,61,55,23,59,0]).reshape((15, 15))
+
+    
+    solver = BeamSearchSolver()
+    solver.solve(dist_mat)
+
