@@ -1,5 +1,6 @@
 from constants import K_STATES
-
+from utils import calculate_path_cost
+import random
 
 class BeamSearchSolver:
     def __init__(self):
@@ -11,18 +12,19 @@ class BeamSearchSolver:
         for index in range(matrix.shape[0]):
             successor_states = []
             for state in states:
-                successor_states.extend(self.generate_successor_of_state(state))
-            states = self.filter_successor_states(successor_states)
+                successor_states.extend(self.generate_successors_of_state(state))
+            states = self.filter_successors_states(successor_states)
         return self.select_best_state(states)
 
     def generate_k_initial_states(self):
-        """[summary]
+        """Generate K inital states for algorithm
         Implement Waine
-
         """
-        pass
+        # Generate unique initial states
+        return [[random.randrange(self.distance_matrix.shape[0])]
+                for i in range(K_STATES)]
 
-    def generate_successor_of_state(self, state):
+    def generate_successors_of_state(self, state):
         """[summary]
         Implement Ian
 
@@ -31,14 +33,16 @@ class BeamSearchSolver:
         """
         pass
 
-    def filter_successor_states(self, states):
-        """
+    def filter_successors_states(self, states):
+        """Filters the successor states generated using the path cost
+        as objective function
         Implement Waine
         
         Arguments:
-            states {List} -- [description]
+            states {List} -- List of states to filtrate
         """
-        pass
+        return sorted(states,
+            key=lambda f: calculate_path_cost(f, self.distance_matrix))[:K_STATES]
 
     def select_best_state(self, states):
         """

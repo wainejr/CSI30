@@ -9,4 +9,4 @@ def calculate_path_cost(path, distance_matrix):
     """Calculates the cost of a path as a list based on the distance matrix and return
     Implemented Waine
     """
-    pass
+    return sum([distance_matrix[path[i], path[i+1]] for i in range(0, len(path)-1)])

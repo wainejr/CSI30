@@ -22,7 +22,8 @@ if(__name__=="__main__"):
         72,52,31,43,65,29,46,31,51,23,59,11,62,0,59,
         46,21,51,64,23,59,33,37,11,37,61,55,23,59,0]).reshape((15, 15))
 
-    
-    solver = BeamSearchSolver()
-    solver.solve(dist_mat)
+    solver_ga = GeneticAlgorithmSolver()
+    solver_bs = BeamSearchSolver()
 
+    solver_ga.solve(distance_matrix)
+    solver_bs.solve(distance_matrix)
