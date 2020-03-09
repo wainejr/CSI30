@@ -25,5 +25,5 @@ if(__name__=="__main__"):
     solver_ga = GeneticAlgorithmSolver()
     solver_bs = BeamSearchSolver()
 
-    solver_ga.solve(distance_matrix)
-    solver_bs.solve(distance_matrix)
+    # print('solution of ga=', solver_ga.solve(distance_matrix))
+    print('solution of bs=', solver_bs.solve(distance_matrix))

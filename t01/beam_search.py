@@ -9,12 +9,15 @@ class BeamSearchSolver:
     def solve(self, matrix):
         self.distance_matrix = matrix
         states = self.generate_k_initial_states()
+        # print('initial state=', states)
         for index in range(matrix.shape[0]):
             successor_states = []
             for state in states:
                 successor_states.extend(self.generate_successors_of_state(state))
+            # print('successor states=', successor_states)
             states = self.filter_successors_states(successor_states)
-        return self.select_best_state(states)
+            # print('final filtered states=', states)
+        return states[0]
 
     def generate_k_initial_states(self):
         """Generate K inital states for algorithm
@@ -25,13 +28,18 @@ class BeamSearchSolver:
                 for i in range(K_STATES)]
 
     def generate_successors_of_state(self, state):
-        """[summary]
+        """Generate all possible next states from state
+        The next possibles paths choices are all nodes that are currently not in state
         Implement Ian
 
         Arguments:
-            state {[type]} -- [description]
+            state {List[int]} -- state to use as base of successors states
         """
-        pass
+        if len(state) == self.distance_matrix.shape[0]: return [state + [state[0]]]
+        return [
+            state + [i]
+            for i in range(self.distance_matrix.shape[0])
+            if not i in state]
 
     def filter_successors_states(self, states):
         """Filters the successor states generated using the path cost
@@ -43,12 +51,3 @@ class BeamSearchSolver:
         """
         return sorted(states,
             key=lambda f: calculate_path_cost(f, self.distance_matrix))[:K_STATES]
-
-    def select_best_state(self, states):
-        """
-        Implement Ian
-        
-        Arguments:
-            states {List} -- [description]
-        """
-        pass
