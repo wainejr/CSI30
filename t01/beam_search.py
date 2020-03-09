@@ -1,5 +1,5 @@
-from constants import K_STATES
-from utils import calculate_path_cost
+from t01.constants import K_STATES
+from t01.utils import calculate_path_cost, select_best_paths
 import random
 
 class BeamSearchSolver:
@@ -49,5 +49,4 @@ class BeamSearchSolver:
         Arguments:
             states {List} -- List of states to filtrate
         """
-        return sorted(states,
-            key=lambda f: calculate_path_cost(f, self.distance_matrix))[:K_STATES]
+        return select_best_paths(states, self.distance_matrix)
