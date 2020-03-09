@@ -1,7 +1,11 @@
 import random
 
-from constants import N_GENES, MAXIMUM_FITNESS_TO_HOLD, NUMBER_OF_GENES_TO_GENERATE, MAX_ITERATIONS
-from utils import calculate_path_cost
+from constants import N_GENES, \
+    MAXIMUM_FITNESS_TO_HOLD, \
+    NUMBER_OF_GENES_TO_GENERATE, \
+    MAX_ITERATIONS, \
+    PROBABILITY_OF_MUTATION
+from utils import calculate_path_cost, select_best_paths
 
 
 class GeneticAlgorithmSolver:
@@ -16,13 +20,15 @@ class GeneticAlgorithmSolver:
         it = 0
         while not self.stop_condtion() and it < MAX_ITERATIONS:
             genes = self.generate_new_genes(genes)
+            print('genes generated=', genes)
             genes = self.select_best_genes(genes)
-            self.past_fitness.append(calculate_path_cost(
-                self.select_best_gene(genes), self.distance_matrix))
+            print('best genes=', genes)
+            self.past_fitness.append(calculate_path_cost(genes[0], self.distance_matrix))
             if len(self.past_fitness) > MAXIMUM_FITNESS_TO_HOLD:
                 self.past_fitness.pop(0)
+            print('past fitness=', self.past_fitness)
             it += 1
-        return self.select_best_gene(genes)
+        return genes[0]
 
     def generate_n_initial_genes(self):
         """Generate N random genes for initialization
@@ -38,7 +44,7 @@ class GeneticAlgorithmSolver:
         Arguments:
             genes {[type]} -- [description]
         """
-        pass
+        return select_best_paths(genes, self.distance_matrix, N_GENES)
 
     def generate_new_genes(self, genes):
         """Generate new genes based on the passed genes, using crossover and mutation
@@ -53,7 +59,6 @@ class GeneticAlgorithmSolver:
                 random.randrange(len(genes))
             new_gene1, new_gene2 = self.crossover(genes[idx1], genes[idx2])
             new_genes.extend([self.mutate(new_gene1), self.mutate(new_gene2)])
-
         return genes + new_genes
 
     def crossover(self, gene1, gene2):
@@ -66,32 +71,28 @@ class GeneticAlgorithmSolver:
         """
         assert len(gene1) == len(gene2)
         idx_cut = random.randrange(len(gene1))
-        print(gene1[:idx_cut] + gene2[idx_cut:])
         return gene1[:idx_cut] + gene2[idx_cut:], \
             gene2[:idx_cut] + gene1[idx_cut:]
 
     def mutate(self, gene):
-        """[summary]
+        """Mutate a gene changing swaping two of its chromossomes
         Implement Ian
         Arguments:
-            gene {[type]} -- [description]
+            gene {List} -- gene to mutate
         """
-        pass
-
-    def select_best_gene(self, genes):
-        """[summary]
-        Implement Ian
-
-        Arguments:
-            genes {[type]} -- [description]
-        """
-        pass
+        will_mutate = random.randint(0, 100) < PROBABILITY_OF_MUTATION
+        if will_mutate:
+            shuffled = [i for i in range(self.distance_matrix.shape[0])]
+            random.shuffle(shuffled)
+            mutation_points = sorted(shuffled[:2])
+            gene[mutation_points[0]], gene[mutation_points[1]] = gene[mutation_points[1]], gene[mutation_points[0]]
+        return gene
 
     def stop_condtion(self):
         """[summary]
         Implement Ian
         """
-        pass
+        return False
 
 
 

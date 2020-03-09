@@ -1,5 +1,5 @@
-from t01.constants import K_STATES
-from t01.utils import calculate_path_cost, select_best_paths
+from constants import K_STATES
+from utils import calculate_path_cost, select_best_paths
 import random
 
 class BeamSearchSolver:

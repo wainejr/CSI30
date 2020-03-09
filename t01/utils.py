@@ -1,4 +1,4 @@
-from t01.constants import K_STATES
+from constants import K_STATES
 
 def check_if_path_is_valid_solution(path, number_of_nodes):
     """Receives a path as a list and returns a boolean indicating whether this path is a solution
