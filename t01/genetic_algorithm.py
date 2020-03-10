@@ -12,7 +12,7 @@ class GeneticAlgorithmSolver:
 
     def __init__(self):
         self.past_fitness = []
-        pass
+        self.iteration = 0
 
     def solve(self, matrix):
         self.distance_matrix = matrix
@@ -92,4 +92,10 @@ class GeneticAlgorithmSolver:
         """[summary]
         Implement Ian
         """
+        if (len(self.past_fitness)
+            and self.past_fitness[0] == self.past_fitness[-1]
+            and len(self.past_fitness) == MAXIMUM_FITNESS_TO_HOLD):
+            print('getting out in iteration {} with fitness'.format(self.iteration), self.past_fitness[-1])
+            return True
+        self.iteration += 1
         return False
