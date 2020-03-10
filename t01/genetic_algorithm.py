@@ -20,15 +20,15 @@ class GeneticAlgorithmSolver:
         it = 0
         while not self.stop_condtion() and it < MAX_ITERATIONS:
             genes = self.generate_new_genes(genes)
-            print('genes generated=', genes)
+            # print('genes generated=', genes)
             genes = self.select_best_genes(genes)
-            print('best genes=', genes)
+            # print('best genes=', genes)
             self.past_fitness.append(calculate_path_cost(genes[0], self.distance_matrix))
             if len(self.past_fitness) > MAXIMUM_FITNESS_TO_HOLD:
                 self.past_fitness.pop(0)
-            print('past fitness=', self.past_fitness)
+            # print('past fitness=', self.past_fitness)
             it += 1
-        return genes[0]
+        return genes[0]+[genes[0][0]]
 
     def generate_n_initial_genes(self):
         """Generate N random genes for initialization
@@ -44,7 +44,7 @@ class GeneticAlgorithmSolver:
         Arguments:
             genes {[type]} -- [description]
         """
-        return select_best_paths(genes, self.distance_matrix, N_GENES)
+        return select_best_paths(genes, self.distance_matrix, N_GENES, make_loop=True)
 
     def generate_new_genes(self, genes):
         """Generate new genes based on the passed genes, using crossover and mutation
@@ -71,8 +71,8 @@ class GeneticAlgorithmSolver:
         """
         assert len(gene1) == len(gene2)
         idx_cut = random.randrange(len(gene1))
-        return gene1[:idx_cut] + gene2[idx_cut:], \
-            gene2[:idx_cut] + gene1[idx_cut:]
+        return gene1[:idx_cut] + [i for i in gene2 if i not in gene1[:idx_cut]], \
+            gene2[:idx_cut] + [i for i in gene1 if i not in gene2[:idx_cut]]
 
     def mutate(self, gene):
         """Mutate a gene changing swaping two of its chromossomes
@@ -93,6 +93,3 @@ class GeneticAlgorithmSolver:
         Implement Ian
         """
         return False
-
-
-

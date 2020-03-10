@@ -2,6 +2,7 @@ import numpy as np
 
 from beam_search import BeamSearchSolver
 from genetic_algorithm import GeneticAlgorithmSolver
+from utils import calculate_path_cost
 
 
 if(__name__=="__main__"):
@@ -25,5 +26,9 @@ if(__name__=="__main__"):
     solver_ga = GeneticAlgorithmSolver()
     solver_bs = BeamSearchSolver()
 
-    print('solution of ga=', solver_ga.solve(distance_matrix))
-    # print('solution of bs=', solver_bs.solve(distance_matrix))
+    res_ga = solver_ga.solve(distance_matrix)
+    res_bs = solver_bs.solve(distance_matrix)
+    print('solution of ga=', res_ga,
+          'weight of ga=', calculate_path_cost(res_ga, distance_matrix))
+    print('solution of bs=', res_bs,
+          'weight of bs=', calculate_path_cost(res_bs, distance_matrix))

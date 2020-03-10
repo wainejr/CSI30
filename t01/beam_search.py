@@ -17,6 +17,7 @@ class BeamSearchSolver:
             # print('successor states=', successor_states)
             states = self.filter_successors_states(successor_states)
             # print('final filtered states=', states)
+
         return states[0]
 
     def generate_k_initial_states(self):
