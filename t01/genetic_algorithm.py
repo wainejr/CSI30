@@ -46,6 +46,46 @@ class GeneticAlgorithmSolver:
         """
         return select_best_paths(genes, self.distance_matrix, N_GENES, make_loop=True)
 
+    def get_acumulated_inverse_cost(self, genes):
+        """Generate a list with the acumulated cost for genes
+        Implement Waine
+
+        Arguments:
+            genes {}
+        """
+        acumulated_inverse_cost = [1/calculate_path_cost(
+            genes[0]+[genes[0][0]], self.distance_matrix)]
+
+        for i in range(1, len(genes)):
+            acumulated_inverse_cost.append(
+                1/calculate_path_cost(genes[i]+[genes[i][0]], self.distance_matrix)
+                + acumulated_inverse_cost[i-1])
+        return [i/acumulated_inverse_cost[-1] for i in acumulated_inverse_cost]
+
+    def get_crossover_pair(self, acumulated_cost):
+        """Generate pair index of genes for the use of crossover
+        Implement Waine
+
+        Arguments:
+            acumulated_cost {list} -- Acumulated cost list to use
+        """
+
+        rand1, rand2 = random.random(), \
+                random.random()
+
+        idx1, idx2 = 0, 0
+
+        for i in range(1, len(acumulated_cost)):
+            if(rand1 >= acumulated_cost[i-1] 
+               and rand1 <= acumulated_cost[i]):
+                idx1 = i
+
+            if(rand2 >= acumulated_cost[i-1] 
+               and rand2 <= acumulated_cost[i]):
+                idx2 = i
+
+        return idx1, idx2
+
     def generate_new_genes(self, genes):
         """Generate new genes based on the passed genes, using crossover and mutation
         Implement Waine
@@ -54,9 +94,10 @@ class GeneticAlgorithmSolver:
             genes {List} -- List of genes in current state, used to generate new genes
         """
         new_genes = []
+        acumulated_inverse_cost = self.get_acumulated_inverse_cost(genes)
+
         while len(new_genes) < NUMBER_OF_GENES_TO_GENERATE:
-            idx1, idx2 = random.randrange(len(genes)), \
-                random.randrange(len(genes))
+            idx1, idx2 = self.get_crossover_pair(acumulated_inverse_cost)
             new_gene1, new_gene2 = self.crossover(genes[idx1], genes[idx2])
             new_genes.extend([self.mutate(new_gene1), self.mutate(new_gene2)])
         return genes + new_genes
