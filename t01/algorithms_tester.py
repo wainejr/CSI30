@@ -20,7 +20,8 @@ class AlgorithmsTester:
         max_iterations=MAX_ITERATIONS,
         probability_of_mutation=PROBABILITY_OF_MUTATION):
         """[summary]
-        
+        Implement Waine
+
         Keyword Arguments:
             number_of_simultations {[type]} -- [description]
             n_genes {[type]} -- [description] (default: {N_GENES})
@@ -48,7 +49,8 @@ class AlgorithmsTester:
     def static_test_beam_search(self,
         k_states=K_STATES):
         """[summary]
-        
+        Implement Waine
+
         Keyword Arguments:
             k_states {[type]} -- [description] (default: {K_STATES})
         
@@ -62,7 +64,8 @@ class AlgorithmsTester:
 
     def test_beam_search(self, range_k_states=[K_STATES]):
         """[summary]
-        
+        Implement Waine
+
         Keyword Arguments:
             range_k_states {list} -- [description] (default: {[K_STATES]})
         
@@ -82,7 +85,8 @@ class AlgorithmsTester:
         max_iterations=[MAX_ITERATIONS],
         probability_of_mutation=[PROBABILITY_OF_MUTATION]):
         """[summary]
-        
+        Implement Waine
+
         Arguments:
             number_of_simulations_for_each_configuration {[type]} -- [description]
         
@@ -102,18 +106,33 @@ class AlgorithmsTester:
         return results
 
     def test_ga_fitness_over_max_iterations(self):
+        """[summary]
+        Implement Ian
+        """
         pass
 
     def test_ga_fitness_over_n_genes(self):
+        """[summary]
+        Implement Waine
+        """
         pass
 
     def test_ga_fitness_over_number_of_genes_to_generate(self):
+        """[summary]
+        Implement Waine
+        """
         pass
 
     def test_lb_fitness_over_kept_states(self):
+        """[summary]
+        Implement Ian
+        """
         pass
 
     def test_avg_simulation_time(self):
+        """[summary]
+        Implement Waine
+        """
         pass
 
     

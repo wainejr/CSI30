@@ -2,7 +2,9 @@ import matplotlib
 
 
 class Plotter:
-
+    """[summary]
+    Implement Ian
+    """
     def __init__(self):
         pass
 
