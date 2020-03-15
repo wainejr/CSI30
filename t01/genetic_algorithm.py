@@ -3,7 +3,7 @@ import time
 
 from constants import N_GENES, \
     MAXIMUM_FITNESS_TO_HOLD, \
-    NUMBER_OF_GENES_TO_GENERATE, \
+    RATIO_OF_GENES_TO_GENERATE, \
     MAX_ITERATIONS, \
     PROBABILITY_OF_MUTATION
 from utils import calculate_path_cost, select_best_paths
@@ -14,7 +14,7 @@ class GeneticAlgorithmSolver:
     def __init__(self, n_genes=N_GENES, 
                  maximum_fitness_to_hold=MAXIMUM_FITNESS_TO_HOLD, 
                  max_iterations=MAX_ITERATIONS,
-                 number_of_genes_to_generate=NUMBER_OF_GENES_TO_GENERATE,
+                 ratio_of_genes_to_generate=RATIO_OF_GENES_TO_GENERATE,
                  probability_of_mutation=PROBABILITY_OF_MUTATION):
 
         self.past_fitness = []
@@ -23,16 +23,16 @@ class GeneticAlgorithmSolver:
         self.n_genes = n_genes
         self.maximum_fitness_to_hold = maximum_fitness_to_hold
         self.max_iterations = max_iterations
-        self.number_of_genes_to_generate = number_of_genes_to_generate
+        self.ratio_of_genes_to_generate = ratio_of_genes_to_generate
         self.probability_of_mutation = probability_of_mutation
 
     def get_parameters(self):
         return {
-            "n_genes": self.n_genes,
-            "maximum_fitness_to_hold": self.maximum_fitness_to_hold,
-            "max_iterations": self.max_iterations,
-            "number_of_genes_to_generate": self.number_of_genes_to_generate,
-            "probability_of_mutation": self.probability_of_mutation,
+            "n_genes": int(self.n_genes),
+            "maximum_fitness_to_hold": int(self.maximum_fitness_to_hold),
+            "max_iterations": int(self.max_iterations),
+            "ratio_of_genes_to_generate": int(self.ratio_of_genes_to_generate),
+            "probability_of_mutation": int(self.probability_of_mutation),
         }
 
     def set_n_genes(self, n_genes):
@@ -44,8 +44,8 @@ class GeneticAlgorithmSolver:
     def set_max_iterations(self, max_iterations):
         self.max_iterations = max_iterations
     
-    def set_number_of_genes_to_generate(self, number_of_genes_to_generate):
-        self.number_of_genes_to_generate = number_of_genes_to_generate
+    def set_ratio_of_genes_to_generate(self, ratio_of_genes_to_generate):
+        self.ratio_of_genes_to_generate = ratio_of_genes_to_generate
 
     def set_probability_of_mutation(self, probability_of_mutation):
         self.probability_of_mutation = probability_of_mutation
@@ -142,7 +142,7 @@ class GeneticAlgorithmSolver:
         new_genes = []
         acumulated_inverse_cost = self.get_acumulated_inverse_cost(genes)
 
-        while len(new_genes) < self.number_of_genes_to_generate:
+        while len(new_genes) < self.n_genes*self.ratio_of_genes_to_generate:
             idx1, idx2 = self.get_crossover_pair(acumulated_inverse_cost)
             new_gene1, new_gene2 = self.crossover(genes[idx1], genes[idx2])
             new_genes.extend([self.mutate(new_gene1), self.mutate(new_gene2)])
@@ -183,7 +183,7 @@ class GeneticAlgorithmSolver:
         if (len(self.past_fitness)
             and self.past_fitness[0] == self.past_fitness[-1]
             and len(self.past_fitness) == self.maximum_fitness_to_hold):
-            print('getting out in iteration {} with fitness'.format(self.iteration), self.past_fitness[-1])
+            # print('getting out in iteration {} with fitness'.format(self.iteration), self.past_fitness[-1])
             return True
         self.iteration += 1
         return False

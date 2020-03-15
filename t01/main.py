@@ -40,6 +40,11 @@ if(__name__=="__main__"):
     '''
 
     alg_tester = AlgorithmsTester(291, distance_matrix)
-
-    ga_static_results = alg_tester.static_test_genetic_algorithm(5)
-    pp.pprint(ga_static_results)
+    alg_tester.perform_tests(
+        avg_simulation_time=True,
+        ga_fitness_over_max_iterations=True,
+        ga_fitness_over_n_genes=True,
+        ga_fitness_over_ratio_of_genes_to_generate=True,
+        lb_fitness_over_kept_states=True
+    )
+    

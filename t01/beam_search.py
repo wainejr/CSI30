@@ -3,8 +3,11 @@ from utils import calculate_path_cost, select_best_paths
 import random
 
 class BeamSearchSolver:
-    def __init__(self):
-        pass
+    def __init__(self, k_states=K_STATES):
+        self.k_states = k_states
+
+    def get_parameters(self):
+        return {"k_states": int(self.k_states)}
 
     def solve(self, matrix):
         self.distance_matrix = matrix
@@ -26,7 +29,7 @@ class BeamSearchSolver:
         """
         # Generate unique initial states
         return [[random.randrange(self.distance_matrix.shape[0])]
-                for i in range(K_STATES)]
+                for i in range(self.k_states)]
 
     def generate_successors_of_state(self, state):
         """Generate all possible next states from state
