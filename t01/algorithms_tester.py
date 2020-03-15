@@ -37,10 +37,83 @@ class AlgorithmsTester:
             t0 = time.time()
             result, n_iterations = solver_ga.solve(self.distance_matrix)
             results.append(
-                {"time": time.time()-t0, 
+                {"time": time.time()-t0,
                 "result": result, 
                 "weight": calculate_path_cost(result, self.distance_matrix),
                 "n_iterations": n_iterations,
                 "params": solver_ga.get_parameters()})
 
         return results
+
+    def static_test_beam_search(self,
+        k_states=K_STATES):
+        """[summary]
+        
+        Keyword Arguments:
+            k_states {[type]} -- [description] (default: {K_STATES})
+        
+        Returns:
+            [type] -- [description]
+        """
+
+        results = []
+        # Code
+        return results
+
+    def test_beam_search(self, range_k_states=[K_STATES]):
+        """[summary]
+        
+        Keyword Arguments:
+            range_k_states {list} -- [description] (default: {[K_STATES]})
+        
+        Returns:
+            [type] -- [description]
+        """
+
+        results = []
+        # Code
+        return results
+
+    def test_genetic_algorithm(self,
+        number_of_simulations_for_each_configuration,
+        n_genes=[N_GENES],
+        maximum_fitness_to_hold=[MAXIMUM_FITNESS_TO_HOLD],
+        number_of_genes_to_generate=[NUMBER_OF_GENES_TO_GENERATE],
+        max_iterations=[MAX_ITERATIONS],
+        probability_of_mutation=[PROBABILITY_OF_MUTATION]):
+        """[summary]
+        
+        Arguments:
+            number_of_simulations_for_each_configuration {[type]} -- [description]
+        
+        Keyword Arguments:
+            n_genes {list} -- [description] (default: {[N_GENES]})
+            maximum_fitness_to_hold {list} -- [description] (default: {[MAXIMUM_FITNESS_TO_HOLD]})
+            number_of_genes_to_generate {list} -- [description] (default: {[NUMBER_OF_GENES_TO_GENERATE]})
+            max_iterations {list} -- [description] (default: {[MAX_ITERATIONS]})
+            probability_of_mutation {list} -- [description] (default: {[PROBABILITY_OF_MUTATION]})
+        
+        Returns:
+            [type] -- [description]
+        """
+
+        results = []
+        # Code
+        return results
+
+    def test_ga_fitness_over_max_iterations(self):
+        pass
+
+    def test_ga_fitness_over_n_genes(self):
+        pass
+
+    def test_ga_fitness_over_number_of_genes_to_generate(self):
+        pass
+
+    def test_lb_fitness_over_kept_states(self):
+        pass
+
+    def test_avg_simulation_time(self):
+        pass
+
+    
