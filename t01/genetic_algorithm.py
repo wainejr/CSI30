@@ -1,4 +1,5 @@
 import random
+import time
 
 from constants import N_GENES, \
     MAXIMUM_FITNESS_TO_HOLD, \
@@ -10,32 +11,77 @@ from utils import calculate_path_cost, select_best_paths
 
 class GeneticAlgorithmSolver:
 
-    def __init__(self):
+    def __init__(self, n_genes=N_GENES, 
+                 maximum_fitness_to_hold=MAXIMUM_FITNESS_TO_HOLD, 
+                 max_iterations=MAX_ITERATIONS,
+                 number_of_genes_to_generate=NUMBER_OF_GENES_TO_GENERATE,
+                 probability_of_mutation=PROBABILITY_OF_MUTATION):
+
         self.past_fitness = []
         self.iteration = 0
 
-    def solve(self, matrix):
+        self.n_genes = n_genes
+        self.maximum_fitness_to_hold = maximum_fitness_to_hold
+        self.max_iterations = max_iterations
+        self.number_of_genes_to_generate = number_of_genes_to_generate
+        self.probability_of_mutation = probability_of_mutation
+
+    def get_parameters(self):
+        return {
+            "n_genes": self.n_genes,
+            "maximum_fitness_to_hold": self.maximum_fitness_to_hold,
+            "max_iterations": self.max_iterations,
+            "number_of_genes_to_generate": self.number_of_genes_to_generate,
+            "probability_of_mutation": self.probability_of_mutation,
+        }
+
+    def set_n_genes(self, n_genes):
+        self.n_genes = n_genes
+    
+    def set_maximum_fitness_to_hold(self, maximum_fitness_to_hold):
+        self.maximum_fitness_to_hold = maximum_fitness_to_hold
+    
+    def set_max_iterations(self, max_iterations):
+        self.max_iterations = max_iterations
+    
+    def set_number_of_genes_to_generate(self, number_of_genes_to_generate):
+        self.number_of_genes_to_generate = number_of_genes_to_generate
+
+    def set_probability_of_mutation(self, probability_of_mutation):
+        self.probability_of_mutation = probability_of_mutation
+
+    def solve(self, matrix, stop_only_max_iteration=False):
+        self.past_fitness = []
+        self.iteration = 0
+
         self.distance_matrix = matrix
         genes = self.generate_n_initial_genes()
         it = 0
-        while not self.stop_condtion() and it < MAX_ITERATIONS:
+
+        condition_stop = lambda self, it: \
+            self.stop_condtion() or it >= self.max_iterations
+
+        if(stop_only_max_iteration):
+            condition_stop = lambda self, it: it >= self.max_iterations
+
+        while not condition_stop(self, it):
             genes = self.generate_new_genes(genes)
             # print('genes generated=', genes)
             genes = self.select_best_genes(genes)
             # print('best genes=', genes)
             self.past_fitness.append(calculate_path_cost(genes[0], self.distance_matrix))
-            if len(self.past_fitness) > MAXIMUM_FITNESS_TO_HOLD:
+            if len(self.past_fitness) > self.maximum_fitness_to_hold:
                 self.past_fitness.pop(0)
-            # print('past fitness=', self.past_fitness)
+            # print('past fitness=', self.past_fitness)cc
             it += 1
-        return genes[0]+[genes[0][0]]
+        return genes[0]+[genes[0][0]], it
 
     def generate_n_initial_genes(self):
         """Generate N random genes for initialization
         Implement Waine
         """
         permutation = list(range(self.distance_matrix.shape[0]))
-        return [random.sample(permutation, len(permutation)) for i in range(N_GENES)]
+        return [random.sample(permutation, len(permutation)) for i in range(self.n_genes)]
 
     def select_best_genes(self, genes):
         """[summary]
@@ -44,7 +90,7 @@ class GeneticAlgorithmSolver:
         Arguments:
             genes {[type]} -- [description]
         """
-        return select_best_paths(genes, self.distance_matrix, N_GENES, make_loop=True)
+        return select_best_paths(genes, self.distance_matrix, self.n_genes, make_loop=True)
 
     def get_acumulated_inverse_cost(self, genes):
         """Generate a list with the acumulated cost for genes
@@ -96,7 +142,7 @@ class GeneticAlgorithmSolver:
         new_genes = []
         acumulated_inverse_cost = self.get_acumulated_inverse_cost(genes)
 
-        while len(new_genes) < NUMBER_OF_GENES_TO_GENERATE:
+        while len(new_genes) < self.number_of_genes_to_generate:
             idx1, idx2 = self.get_crossover_pair(acumulated_inverse_cost)
             new_gene1, new_gene2 = self.crossover(genes[idx1], genes[idx2])
             new_genes.extend([self.mutate(new_gene1), self.mutate(new_gene2)])
@@ -121,12 +167,13 @@ class GeneticAlgorithmSolver:
         Arguments:
             gene {List} -- gene to mutate
         """
-        will_mutate = random.randint(0, 100) < PROBABILITY_OF_MUTATION
+        will_mutate = random.randint(0, 100) < self.probability_of_mutation
         if will_mutate:
             shuffled = [i for i in range(self.distance_matrix.shape[0])]
             random.shuffle(shuffled)
             mutation_points = sorted(shuffled[:2])
-            gene[mutation_points[0]], gene[mutation_points[1]] = gene[mutation_points[1]], gene[mutation_points[0]]
+            gene[mutation_points[0]], gene[mutation_points[1]] = \
+                gene[mutation_points[1]], gene[mutation_points[0]]
         return gene
 
     def stop_condtion(self):
@@ -135,7 +182,7 @@ class GeneticAlgorithmSolver:
         """
         if (len(self.past_fitness)
             and self.past_fitness[0] == self.past_fitness[-1]
-            and len(self.past_fitness) == MAXIMUM_FITNESS_TO_HOLD):
+            and len(self.past_fitness) == self.maximum_fitness_to_hold):
             print('getting out in iteration {} with fitness'.format(self.iteration), self.past_fitness[-1])
             return True
         self.iteration += 1

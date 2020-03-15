@@ -3,10 +3,14 @@ import numpy as np
 from beam_search import BeamSearchSolver
 from genetic_algorithm import GeneticAlgorithmSolver
 from utils import calculate_path_cost
+from algorithms_tester import AlgorithmsTester
 
+import pprint
+
+pp = pprint.PrettyPrinter()
 
 if(__name__=="__main__"):
-    distance_matrix = np.array(
+    distance_matrix = np.array( # optimal solution is probably 291 for this distance matrix
         [0,29,82,46,68,52,72,42,51,55,29,74,23,72,46,
         29,0,55,46,42,43,43,23,23,31,41,51,11,52,21,
         82,55,0,68,46,55,23,43,41,29,79,21,64,31,51,
@@ -23,12 +27,19 @@ if(__name__=="__main__"):
         72,52,31,43,65,29,46,31,51,23,59,11,62,0,59,
         46,21,51,64,23,59,33,37,11,37,61,55,23,59,0]).reshape((15, 15))
 
+    '''
     solver_ga = GeneticAlgorithmSolver()
     solver_bs = BeamSearchSolver()
 
-    res_ga = solver_ga.solve(distance_matrix)
+    res_ga, n_iterations_ga = solver_ga.solve(distance_matrix)
     res_bs = solver_bs.solve(distance_matrix)
     print('solution of ga=', res_ga,
           'weight of ga=', calculate_path_cost(res_ga, distance_matrix))
     print('solution of bs=', res_bs,
           'weight of bs=', calculate_path_cost(res_bs, distance_matrix))
+    '''
+
+    alg_tester = AlgorithmsTester(291, distance_matrix)
+
+    ga_static_results = alg_tester.static_test_genetic_algorithm(5)
+    pp.pprint(ga_static_results)
