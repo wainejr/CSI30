@@ -31,7 +31,7 @@ class GeneticAlgorithmSolver:
             "n_genes": int(self.n_genes),
             "maximum_fitness_to_hold": int(self.maximum_fitness_to_hold),
             "max_iterations": int(self.max_iterations),
-            "ratio_of_genes_to_generate": int(self.ratio_of_genes_to_generate),
+            "ratio_of_genes_to_generate": float(self.ratio_of_genes_to_generate),
             "probability_of_mutation": int(self.probability_of_mutation),
         }
 
