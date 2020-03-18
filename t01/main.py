@@ -45,6 +45,5 @@ if(__name__=="__main__"):
         ga_fitness_over_max_iterations=False,
         ga_fitness_over_n_genes=False,
         ga_fitness_over_ratio_of_genes_to_generate=False,
-        lb_fitness_over_kept_states=False
-    )
+        lb_fitness_over_kept_states=True)
     
