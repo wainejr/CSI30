@@ -1,4 +1,6 @@
 import numpy as np
+import random
+import time
 
 from beam_search import BeamSearchSolver
 from genetic_algorithm import GeneticAlgorithmSolver
@@ -10,6 +12,8 @@ import pprint
 pp = pprint.PrettyPrinter()
 
 if(__name__=="__main__"):
+
+    random.seed(int(time.time()*1000))
     distance_matrix = np.array( # optimal solution is probably 291 for this distance matrix
         [0,29,82,46,68,52,72,42,51,55,29,74,23,72,46,
         29,0,55,46,42,43,43,23,23,31,41,51,11,52,21,
@@ -26,7 +30,6 @@ if(__name__=="__main__"):
         23,11,64,51,46,51,51,33,29,41,42,61,0,62,23,
         72,52,31,43,65,29,46,31,51,23,59,11,62,0,59,
         46,21,51,64,23,59,33,37,11,37,61,55,23,59,0]).reshape((15, 15))
-
     '''
     solver_ga = GeneticAlgorithmSolver()
     solver_bs = BeamSearchSolver()
@@ -38,10 +41,9 @@ if(__name__=="__main__"):
     print('solution of bs=', res_bs,
           'weight of bs=', calculate_path_cost(res_bs, distance_matrix))
     '''
-
     alg_tester = AlgorithmsTester(291, distance_matrix)
     alg_tester.perform_tests(
-        avg_simulation=True,
+        avg_simulation=False,
         ga_fitness_over_max_iterations=False,
         ga_fitness_over_n_genes=False,
         ga_fitness_over_ratio_of_genes_to_generate=False,

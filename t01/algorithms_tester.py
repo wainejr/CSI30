@@ -25,7 +25,7 @@ class AlgorithmsTester:
         ratio_of_genes_to_generate=RATIO_OF_GENES_TO_GENERATE,
         max_iterations=MAX_ITERATIONS,
         probability_of_mutation=PROBABILITY_OF_MUTATION):
-        """[summary]
+        """
         Implement Waine
 
         Keyword Arguments:
@@ -56,7 +56,7 @@ class AlgorithmsTester:
     def static_test_beam_search(self,
         number_of_simulations,
         k_states=K_STATES):
-        """[summary]
+        """
         Implement Waine
 
         Arguments:
@@ -81,7 +81,7 @@ class AlgorithmsTester:
         return results
 
     def test_beam_search(self, number_of_simulations, range_k_states=[K_STATES]):
-        """[summary]
+        """Test the beam search given the specified parameters
         Implement Waine
 
         Keyword Arguments:
@@ -92,7 +92,7 @@ class AlgorithmsTester:
         """
         results = []
         for k in range_k_states:
-            results.extend(self.static_test_beam_search(number_of_simulations, k))
+            results.append(self.static_test_beam_search(number_of_simulations, k))
 
         return results
 
@@ -103,7 +103,7 @@ class AlgorithmsTester:
         ratio_of_genes_to_generate=[RATIO_OF_GENES_TO_GENERATE],
         max_iterations=[MAX_ITERATIONS],
         probability_of_mutation=[PROBABILITY_OF_MUTATION]):
-        """[summary]
+        """Test the genetic algorithm given the specified parameters
         Implement Waine
 
         Arguments:
@@ -125,7 +125,7 @@ class AlgorithmsTester:
                 for r_gen_generate in ratio_of_genes_to_generate:
                     for max_it in max_iterations:
                         for prob_of_mutation in probability_of_mutation:
-                            results.extend(self.static_test_genetic_algorithm(
+                            results.append(self.static_test_genetic_algorithm(
                                 number_of_simulations_for_each_configuration,
                                 n_gen, max_fit, r_gen_generate, max_it,
                                 prob_of_mutation
@@ -133,66 +133,64 @@ class AlgorithmsTester:
         return results
 
     def test_ga_fitness_over_max_iterations(self):
-        """[summary]
+        """average weight for each iteration until the solution is found
         Implement Ian
         """
         results = self.test_genetic_algorithm(10, maximum_fitness_to_hold=[150], max_iterations=[150])[0]
-        result = self.select_best_result(results)
-        iterations = [i + 1 for i in range(len(result['fitnesses']))]
-        self.plotter.plot_line(iterations, result['fitnesses'])
-        self.plotter.save_plots('Iteração', 'Fitness', 'fit_over_ite', 'Fitness X Iteração')
+        new_results = []
+        for i in range(len(results[0]['fitnesses'])):
+            res = [{'weight': result['fitnesses'][i]} for result in results]
+            new_results.append(res)
+        iterations = [i + 1 for i in range(150)]
+        weights = [self.average_weight(result) for result in new_results]
+        self.plotter.plot_line(iterations, weights)
+        self.plotter.save_plots('Iteração', 'Distãncia', 'fit_over_ite', 'Distância da solução X Iteração')
         # self.plotter.flush()
         
 
     def test_ga_fitness_over_n_genes(self):
-        """[summary]
+        """average weight over number of genes in the population
         Implement Waine
         """
         n_genes = [5, 10, 25, 50, 100, 150, 250]
-        results = self.test_genetic_algorithm(5, n_genes=n_genes)
+        results = self.test_genetic_algorithm(10, n_genes=n_genes)
         # self.save_dicts_as_json(results, "fitness_over_n_genes")
-        # fitness = [self.select_best_result(result)['weight'] for result in results]
-        # self.plotter.plot_line(n_genes, fitness)
-        points = np.array([[r["params"]["n_genes"], r["weight"]] for r in results])
-        self.plotter.plot_points(points[:, 0], points[:, 1])
-        self.plotter.save_plots('Tamanho da população', 'Fitness', 'fit_over_n_genes_points', 'Fitness x Tamanho da população')
+        fitness = [self.average_weight(result) for result in results]
+        self.plotter.plot_line(n_genes, fitness)
+        self.plotter.save_plots('População', 'Distância', 'fit_over_ngenes', 'Distância da solução x tamanho da população')
+        # points = np.array([[r["params"]["n_genes"], r["weight"]] for r in results])
+        # self.plotter.plot_points(points[:, 0], points[:, 1])
+        # self.plotter.save_plots('Tamanho da população', 'Fitness', 'fit_over_n_genes_points', 'Fitness x Tamanho da população')
 
     def test_ga_fitness_over_ratio_of_genes_to_generate(self):
-        """[summary]
+        """average weight over the quantity of new genes generated in each iteration
         Implement Waine
         """
         ratio_of_genes_to_generate = [0.5, 1, 2.5, 5, 7.5, 10]
-        results = self.test_genetic_algorithm(5, 
+        results = self.test_genetic_algorithm(10, 
             ratio_of_genes_to_generate=ratio_of_genes_to_generate)
         # self.save_dicts_as_json(results, "fitness_over_ratio_of_genes")
-        #fitness = [self.select_best_result(result)['weight'] for result in results]
-        #self.plotter.plot_line(ratio_of_genes_to_generate, fitness)
-        #self.plotter.save_plots('Ratio', 'Fitness', 'fit_over_rat', 'Fitness x Ratio')
-        #self.plotter.flush()
-        points = np.array([[float(r["params"]["ratio_of_genes_to_generate"]), r['weight']]
-            for r in results])
-        self.plotter.plot_points(points[:, 0], points[:, 1])
-        self.plotter.save_plots('Ratio', 'Weight', 'fit_over_weight', 'Weight x Ratio')
+        fitness = [self.average_weight(result) for result in results]
+        self.plotter.plot_line(ratio_of_genes_to_generate, fitness)
+        self.plotter.save_plots('Razão', 'Distância', 'fit_over_ratio', 'Distância da solução x razão de indivíduos gerados')
+        # points = np.array([[float(r["params"]["ratio_of_genes_to_generate"]), r['weight']]
+        #     for r in results])
+        # self.plotter.plot_points(points[:, 0], points[:, 1])
+        # self.plotter.save_plots('Razão', 'Distância', 'fit_over_weight', 'Distância da solução x razão de indivíduos gerados')
         #self.plotter.flush()
 
     def test_lb_fitness_over_kept_states(self):
-        """[summary]
+        """average weight of simulations over the number of generated and kept states in each iteration
         Implement Ian
         """
         kept_states = list(range(16))[1:]
-        print('kept', kept_states)
-        results = self.test_beam_search(50, range_k_states=kept_states)
-        #results = [self.select_best_result(result) for result in results]
-        #fitness = [result['weight'] for result in results]
-        #self.plotter.plot_line(kept_states, fitness)
-        #self.plotter.save_plots('Estados em memória', 'Fitness', 'fit_over_mem', 'Fitness x Estados em memória')
-        #self.plotter.flush()
-        points= np.array([[r["params"]["k_states"], r["weight"]] for r in results])
-        self.plotter.plot_points(points[:,0], points[:,1])
-        self.plotter.save_plots('Estados em memória', 'Fitness', 'fit_over_mem_points', 'Fitness x Estados em memória')
+        results = self.test_beam_search(100, range_k_states=kept_states)
+        weights = [self.average_weight(result) for result in results]
+        self.plotter.plot_line(kept_states, weights)
+        self.plotter.save_plots('Estados em memória', 'Distância', 'fit_over_mem', 'Distância da solução x Estados em memória')
 
     def test_averages(self):
-        """[summary]
+        """Test average time and weight of each algorithm
         Implement Waine
         """
         res_bs = self.test_beam_search(100)[0]
@@ -214,8 +212,11 @@ class AlgorithmsTester:
         print('avg fitness of genetic algorithm: {}'.format(ga_avg_fitness))
         print('best fitness of genetic algorithm: {}'.format(ga_best_fitness))
 
+    def average_weight(self, results):
+        return sum([result['weight'] for result in results]) / len(results)
+
     def select_best_result(self, results, field='weight', compare='lt'):
-        """[summary]
+        """
         Implement Ian
         """
         best = 0
@@ -229,7 +230,7 @@ class AlgorithmsTester:
         return results[best]
 
     def save_dicts_as_json(self, list_of_dicts, dict_name):
-        """[summary]
+        """Save the passed dictionaries as a json file
         Implement Waine
 
         Arguments:
@@ -249,7 +250,7 @@ class AlgorithmsTester:
         ga_fitness_over_n_genes=True,
         ga_fitness_over_ratio_of_genes_to_generate=True,
         lb_fitness_over_kept_states=True):
-        """[summary]
+        """Peform a battery of tests on each algorithm
         
         Keyword Arguments:
             avg_simulation_time {bool} -- [description] (default: {True})

@@ -84,7 +84,7 @@ class GeneticAlgorithmSolver:
         return [random.sample(permutation, len(permutation)) for i in range(self.n_genes)]
 
     def select_best_genes(self, genes):
-        """[summary]
+        """Filter population to only superior genes
         Implement Ian
 
         Arguments:
@@ -177,7 +177,7 @@ class GeneticAlgorithmSolver:
         return gene
 
     def stop_condtion(self):
-        """[summary]
+        """Condition to stop the algorithm, it stops when the last n fitnesses of populations are the same
         Implement Ian
         """
         if (len(self.past_fitness)
