@@ -16,6 +16,9 @@ class Plotter:
         plt.plot(x, y)
         pass
 
+    def plot_points(self, x, y):
+        plt.scatter(x, y)
+
     def flush(self):
         plt.gca().clear()
         pass
@@ -25,3 +28,4 @@ class Plotter:
         plt.ylabel(y_name)
         plt.title(plot_name)
         plt.savefig('images/' + img_filename + '.png')
+        plt.gca().clear()

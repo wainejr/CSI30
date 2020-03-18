@@ -1,5 +1,6 @@
 import time
 import json
+import numpy as np
 
 from genetic_algorithm import GeneticAlgorithmSolver
 from beam_search import BeamSearchSolver
@@ -91,7 +92,7 @@ class AlgorithmsTester:
         """
         results = []
         for k in range_k_states:
-            results.append(self.static_test_beam_search(number_of_simulations, k))
+            results.extend(self.static_test_beam_search(number_of_simulations, k))
 
         return results
 
@@ -124,7 +125,7 @@ class AlgorithmsTester:
                 for r_gen_generate in ratio_of_genes_to_generate:
                     for max_it in max_iterations:
                         for prob_of_mutation in probability_of_mutation:
-                            results.append(self.static_test_genetic_algorithm(
+                            results.extend(self.static_test_genetic_algorithm(
                                 number_of_simulations_for_each_configuration,
                                 n_gen, max_fit, r_gen_generate, max_it,
                                 prob_of_mutation
@@ -140,7 +141,7 @@ class AlgorithmsTester:
         iterations = [i + 1 for i in range(len(result['fitnesses']))]
         self.plotter.plot_line(iterations, result['fitnesses'])
         self.plotter.save_plots('Iteração', 'Fitness', 'fit_over_ite', 'Fitness X Iteração')
-        self.plotter.flush()
+        # self.plotter.flush()
         
 
     def test_ga_fitness_over_n_genes(self):
@@ -150,9 +151,11 @@ class AlgorithmsTester:
         n_genes = [5, 10, 25, 50, 100, 150, 250]
         results = self.test_genetic_algorithm(5, n_genes=n_genes)
         # self.save_dicts_as_json(results, "fitness_over_n_genes")
-        fitness = [self.select_best_result(result)['weight'] for result in results]
-        self.plotter.plot_line(n_genes, fitness)
-        self.plotter.save_plots('Tamanho da população', 'Fitness', 'fit_over_n_genes', 'Fitness x Tamanho da população')
+        # fitness = [self.select_best_result(result)['weight'] for result in results]
+        # self.plotter.plot_line(n_genes, fitness)
+        points = np.array([[r["params"]["n_genes"], r["weight"]] for r in results])
+        self.plotter.plot_points(points[:, 0], points[:, 1])
+        self.plotter.save_plots('Tamanho da população', 'Fitness', 'fit_over_n_genes_points', 'Fitness x Tamanho da população')
 
     def test_ga_fitness_over_ratio_of_genes_to_generate(self):
         """[summary]
@@ -162,12 +165,15 @@ class AlgorithmsTester:
         results = self.test_genetic_algorithm(5, 
             ratio_of_genes_to_generate=ratio_of_genes_to_generate)
         # self.save_dicts_as_json(results, "fitness_over_ratio_of_genes")
-        fitness = [self.select_best_result(result)['weight'] for result in results]
-
-        self.plotter.plot_line(ratio_of_genes_to_generate, fitness)
-        self.plotter.save_plots('Ratio', 'Fitness', 'fit_over_rat', 'Fitness x Ratio')
-        self.flush()
-        # Continue to plot
+        #fitness = [self.select_best_result(result)['weight'] for result in results]
+        #self.plotter.plot_line(ratio_of_genes_to_generate, fitness)
+        #self.plotter.save_plots('Ratio', 'Fitness', 'fit_over_rat', 'Fitness x Ratio')
+        #self.plotter.flush()
+        points = np.array([[float(r["params"]["ratio_of_genes_to_generate"]), r['weight']]
+            for r in results])
+        self.plotter.plot_points(points[:, 0], points[:, 1])
+        self.plotter.save_plots('Ratio', 'Weight', 'fit_over_weight', 'Weight x Ratio')
+        #self.plotter.flush()
 
     def test_lb_fitness_over_kept_states(self):
         """[summary]
@@ -176,11 +182,14 @@ class AlgorithmsTester:
         kept_states = list(range(16))[1:]
         print('kept', kept_states)
         results = self.test_beam_search(50, range_k_states=kept_states)
-        results = [self.select_best_result(result) for result in results]
-        fitness = [result['weight'] for result in results]
-        self.plotter.plot_line(kept_states, fitness)
-        self.plotter.save_plots('Estados em memória', 'Fitness', 'fit_over_mem', 'Fitness x Estados em memória')
-        self.plotter.flush()
+        #results = [self.select_best_result(result) for result in results]
+        #fitness = [result['weight'] for result in results]
+        #self.plotter.plot_line(kept_states, fitness)
+        #self.plotter.save_plots('Estados em memória', 'Fitness', 'fit_over_mem', 'Fitness x Estados em memória')
+        #self.plotter.flush()
+        points= np.array([[r["params"]["k_states"], r["weight"]] for r in results])
+        self.plotter.plot_points(points[:,0], points[:,1])
+        self.plotter.save_plots('Estados em memória', 'Fitness', 'fit_over_mem_points', 'Fitness x Estados em memória')
 
     def test_avg_simulation_time(self):
         """[summary]
