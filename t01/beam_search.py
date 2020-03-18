@@ -12,24 +12,22 @@ class BeamSearchSolver:
     def solve(self, matrix):
         self.distance_matrix = matrix
         states = self.generate_k_initial_states()
-        # print('initial state=', states)
         for index in range(matrix.shape[0]):
             successor_states = []
             for state in states:
                 successor_states.extend(self.generate_successors_of_state(state))
-            # print('successor states=', successor_states)
             states = self.filter_successors_states(successor_states)
-            # print('final filtered states=', states)
 
         return states[0]
 
     def generate_k_initial_states(self):
         """Generate K inital states for algorithm
-        Implement Waine
+        Implement Ian
         """
         # Generate unique initial states
-        return [[random.randrange(self.distance_matrix.shape[0])]
-                for i in range(self.k_states)]
+        states = list(range(self.distance_matrix.shape[0]))
+        random.shuffle(states)
+        return [[state] for state in states[:self.k_states]]
 
     def generate_successors_of_state(self, state):
         """Generate all possible next states from state
@@ -53,4 +51,4 @@ class BeamSearchSolver:
         Arguments:
             states {List} -- List of states to filtrate
         """
-        return select_best_paths(states, self.distance_matrix)
+        return select_best_paths(states, self.distance_matrix, number_of_remaining_paths=self.k_states)

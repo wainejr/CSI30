@@ -74,7 +74,7 @@ class GeneticAlgorithmSolver:
                 self.past_fitness.pop(0)
             # print('past fitness=', self.past_fitness)cc
             it += 1
-        return genes[0]+[genes[0][0]], it
+        return genes[0]+[genes[0][0]], it, self.past_fitness
 
     def generate_n_initial_genes(self):
         """Generate N random genes for initialization

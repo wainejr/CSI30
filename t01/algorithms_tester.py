@@ -3,6 +3,7 @@ import json
 
 from genetic_algorithm import GeneticAlgorithmSolver
 from beam_search import BeamSearchSolver
+from plotter import Plotter
 
 from constants import *
 from utils import calculate_path_cost
@@ -14,6 +15,7 @@ class AlgorithmsTester:
         self.start_time = time.gmtime()
         self.optimal_solution = optimal_solution
         self.distance_matrix = distance_matrix
+        self.plotter = Plotter()
 
     def static_test_genetic_algorithm(self,
         number_of_simulations,
@@ -39,13 +41,14 @@ class AlgorithmsTester:
         results = []
         for i in range(0, number_of_simulations):
             t0 = time.time()
-            result, n_iterations = solver_ga.solve(self.distance_matrix)
+            result, n_iterations, fitnesses = solver_ga.solve(self.distance_matrix)
             results.append(
                 {"time": float(time.time()-t0),
                 "result": list(result), 
                 "weight": int(calculate_path_cost(result, self.distance_matrix)),
                 "n_iterations": int(n_iterations),
-                "params": solver_ga.get_parameters()})
+                "params": solver_ga.get_parameters(),
+                'fitnesses': fitnesses})
 
         return results
 
@@ -64,8 +67,6 @@ class AlgorithmsTester:
         Returns:
             [type] -- [description]
         """
-
-        results = []
         solver_bs = BeamSearchSolver(k_states)
         results = []
         for i in range(0, number_of_simulations):
@@ -90,7 +91,7 @@ class AlgorithmsTester:
         """
         results = []
         for k in range_k_states:
-            results.extend(self.static_test_beam_search(number_of_simulations, k))
+            results.append(self.static_test_beam_search(number_of_simulations, k))
 
         return results
 
@@ -117,14 +118,13 @@ class AlgorithmsTester:
         Returns:
             [type] -- [description]
         """
-
         results = []
         for n_gen in n_genes:
             for max_fit in maximum_fitness_to_hold:
                 for r_gen_generate in ratio_of_genes_to_generate:
                     for max_it in max_iterations:
                         for prob_of_mutation in probability_of_mutation:
-                            results.extend(self.static_test_genetic_algorithm(
+                            results.append(self.static_test_genetic_algorithm(
                                 number_of_simulations_for_each_configuration,
                                 n_gen, max_fit, r_gen_generate, max_it,
                                 prob_of_mutation
@@ -135,7 +135,13 @@ class AlgorithmsTester:
         """[summary]
         Implement Ian
         """
-        pass
+        results = self.test_genetic_algorithm(10, maximum_fitness_to_hold=[150], max_iterations=[150])[0]
+        result = self.select_best_result(results)
+        iterations = [i + 1 for i in range(len(result['fitnesses']))]
+        self.plotter.plot_line(iterations, result['fitnesses'])
+        self.plotter.save_plots('Iteração', 'Fitness', 'fit_over_ite', 'Fitness X Iteração')
+        self.plotter.flush()
+        
 
     def test_ga_fitness_over_n_genes(self):
         """[summary]
@@ -143,8 +149,10 @@ class AlgorithmsTester:
         """
         n_genes = [5, 10, 25, 50, 100, 150, 250]
         results = self.test_genetic_algorithm(5, n_genes=n_genes)
-        self.save_dicts_as_json(results, "fitness_over_n_genes")
-        # Continue to plot
+        # self.save_dicts_as_json(results, "fitness_over_n_genes")
+        fitness = [self.select_best_result(result)['weight'] for result in results]
+        self.plotter.plot_line(n_genes, fitness)
+        self.plotter.save_plots('Tamanho da população', 'Fitness', 'fit_over_n_genes', 'Fitness x Tamanho da população')
 
     def test_ga_fitness_over_ratio_of_genes_to_generate(self):
         """[summary]
@@ -153,24 +161,53 @@ class AlgorithmsTester:
         ratio_of_genes_to_generate = [0.5, 1, 2.5, 5, 7.5, 10]
         results = self.test_genetic_algorithm(5, 
             ratio_of_genes_to_generate=ratio_of_genes_to_generate)
-        self.save_dicts_as_json(results, "fitness_over_ratio_of_genes")
+        # self.save_dicts_as_json(results, "fitness_over_ratio_of_genes")
+        fitness = [self.select_best_result(result)['weight'] for result in results]
+
+        self.plotter.plot_line(ratio_of_genes_to_generate, fitness)
+        self.plotter.save_plots('Ratio', 'Fitness', 'fit_over_rat', 'Fitness x Ratio')
+        self.flush()
         # Continue to plot
 
     def test_lb_fitness_over_kept_states(self):
         """[summary]
         Implement Ian
         """
-        pass
+        kept_states = list(range(16))[1:]
+        print('kept', kept_states)
+        results = self.test_beam_search(50, range_k_states=kept_states)
+        results = [self.select_best_result(result) for result in results]
+        fitness = [result['weight'] for result in results]
+        self.plotter.plot_line(kept_states, fitness)
+        self.plotter.save_plots('Estados em memória', 'Fitness', 'fit_over_mem', 'Fitness x Estados em memória')
+        self.plotter.flush()
 
     def test_avg_simulation_time(self):
         """[summary]
         Implement Waine
         """
-        res_bs = self.static_test_beam_search(5)
-        res_ga = self.static_test_genetic_algorithm(5)
-        self.save_dicts_as_json(res_bs, "avg_time_bs")
-        self.save_dicts_as_json(res_ga, "avg_time_ga")
+        res_bs = self.test_beam_search(100)[0]
+        print('res', res_bs)
+        res_ga = self.test_genetic_algorithm(100)[0]
+        avg_bs = sum([result["time"] for result in res_bs]) / len(res_bs)
+        print('avg time of beam search: {}'.format(avg_bs))
+        # self.save_dicts_as_json(res_bs, "avg_time_bs")
+        # self.save_dicts_as_json(res_ga, "avg_time_ga")
         # continue to plot...
+
+    def select_best_result(self, results, field='weight', compare='lt'):
+        """[summary]
+        Implement Ian
+        """
+        best = 0
+        for index, result in enumerate(results[1:]):
+            if compare == 'lt':
+                if results[best][field] < result[field]:
+                    best = index
+            elif compare == 'gt':
+                if results[best][field] > result[field]:
+                    best = index
+        return results[best]
 
     def save_dicts_as_json(self, list_of_dicts, dict_name):
         """[summary]
