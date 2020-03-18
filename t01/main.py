@@ -41,7 +41,7 @@ if(__name__=="__main__"):
 
     alg_tester = AlgorithmsTester(291, distance_matrix)
     alg_tester.perform_tests(
-        avg_simulation_time=True,
+        avg_simulation=True,
         ga_fitness_over_max_iterations=False,
         ga_fitness_over_n_genes=False,
         ga_fitness_over_ratio_of_genes_to_generate=False,

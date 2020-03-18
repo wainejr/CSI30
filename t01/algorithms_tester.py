@@ -182,18 +182,28 @@ class AlgorithmsTester:
         self.plotter.save_plots('Estados em memória', 'Fitness', 'fit_over_mem', 'Fitness x Estados em memória')
         self.plotter.flush()
 
-    def test_avg_simulation_time(self):
+    def test_averages(self):
         """[summary]
         Implement Waine
         """
         res_bs = self.test_beam_search(100)[0]
-        print('res', res_bs)
         res_ga = self.test_genetic_algorithm(100)[0]
-        avg_bs = sum([result["time"] for result in res_bs]) / len(res_bs)
-        print('avg time of beam search: {}'.format(avg_bs))
-        # self.save_dicts_as_json(res_bs, "avg_time_bs")
-        # self.save_dicts_as_json(res_ga, "avg_time_ga")
-        # continue to plot...
+
+        # Beam Search
+        bs_avg_time = sum([result["time"] for result in res_bs]) / len(res_bs)
+        bs_avg_fitness = sum([result["weight"] for result in res_bs]) / len(res_bs)
+        bs_best_fitness = self.select_best_result(res_bs)['weight']
+        print('avg time of beam search: {}'.format(bs_avg_time))
+        print('avg fitness of beam search: {}'.format(bs_avg_fitness))
+        print('best fitness of beam search: {}'.format(bs_best_fitness))
+
+        # Genetic Algorithm
+        ga_avg_time = sum([result["time"] for result in res_ga]) / len(res_ga)
+        ga_avg_fitness = sum([result["weight"] for result in res_ga]) / len(res_ga)
+        ga_best_fitness = self.select_best_result(res_ga)['weight']
+        print('avg time of genetic algorithm: {}'.format(ga_avg_time))
+        print('avg fitness of genetic algorithm: {}'.format(ga_avg_fitness))
+        print('best fitness of genetic algorithm: {}'.format(ga_best_fitness))
 
     def select_best_result(self, results, field='weight', compare='lt'):
         """[summary]
@@ -202,10 +212,10 @@ class AlgorithmsTester:
         best = 0
         for index, result in enumerate(results[1:]):
             if compare == 'lt':
-                if results[best][field] < result[field]:
+                if results[best][field] > result[field]:
                     best = index
             elif compare == 'gt':
-                if results[best][field] > result[field]:
+                if results[best][field] < result[field]:
                     best = index
         return results[best]
 
@@ -225,7 +235,7 @@ class AlgorithmsTester:
             f.write(json.dumps(list_of_dicts))
     
     def perform_tests(self, 
-        avg_simulation_time=True, 
+        avg_simulation=True, 
         ga_fitness_over_max_iterations=True,
         ga_fitness_over_n_genes=True,
         ga_fitness_over_ratio_of_genes_to_generate=True,
@@ -240,9 +250,9 @@ class AlgorithmsTester:
             lb_fitness_over_kept_states {bool} -- [description] (default: {True})
         """
 
-        if(avg_simulation_time):
+        if(avg_simulation):
             print("Started avg_simulation_time")
-            self.test_avg_simulation_time()
+            self.test_averages()
             print("Finished avg_simulation_time")
 
         if(ga_fitness_over_max_iterations):
